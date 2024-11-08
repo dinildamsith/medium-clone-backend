@@ -15,21 +15,26 @@ PostController.post("/add-post",async  (req:Request, res:Response) => {
 
     try {
 
-        const {authorMail,authorName,postTitle,postDescription,postSummary,images} = req.body
+        const {authorMail,authorName,authorImage,postTitle,postDescription,postSummary,images,postClaps,postComments} = req.body
+
+        console.log(req.body)
 
         if (!authorName || !postTitle || !postDescription) {
             return res.status(400).json({ message: "authorName, postTitle, and postDescription are required." });
         }
 
         const newPost = new postModel({
-                authorMail,
-                authorName,
-                date: new Date(),
-                postTitle,
-                postDescription,
-                postSummary,
-                images: images || []
-            })
+            authorMail,
+            authorName,
+            authorImage,
+            date: new Date(), // sets the current date
+            postTitle,
+            postDescription,
+            postSummary,
+            images: images || [],
+            postClaps: postClaps || 0,
+            postComments: postComments || []
+        })
 
         const savedPost = await newPost.save();
         res.status(201).json(savedPost);
