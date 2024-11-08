@@ -5,7 +5,7 @@ const PostSchema = new mongoose.Schema({
     authorName: { type: String, required: true },
     date: { type: Date, default: Date.now }, // Automatically adds the current date
     postTitle: { type: String, required: true },
-    postDescription: { type: String, required: true },
+    postDescription: { type: String, required: false },
     postSummary:{ type: String, required: true },
     images: [{ type: String }],
 })

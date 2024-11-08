@@ -65,4 +65,29 @@ PostController.get("/user-all-article", async (req: Request, res: Response) => {
     }
 });
 
-export default PostController;
+
+//----------for you feed have articles get
+PostController.get("/for-you", async (req: Request, res: Response) => {
+    try {
+      const authorMail = req.query.email as string;
+  
+      // Find posts where authorMail is not equal to the given email
+      const forYouPost = await PostModel.find({ authorMail: { $ne: authorMail } });
+  
+      if (forYouPost.length === 0) {
+        return res.status(404).json({ message: "No posts found" });
+      }
+  
+      return res.status(200).json(forYouPost);
+  
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      res.status(500).json({ message: "Server error, please try again later" });
+    }
+  });
+  
+
+
+
+// @ts-ignore
+export default PostController
