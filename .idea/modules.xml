@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/medium-clone-backend.iml" filepath="$PROJECT_DIR$/.idea/medium-clone-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/BackEnd.iml" filepath="$PROJECT_DIR$/.idea/BackEnd.iml" />
     </modules>
   </component>
 </project>
