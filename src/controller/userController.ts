@@ -89,6 +89,45 @@ UserController.get("/search-user", async (req: Request, res: Response) => {
     }
 });
 
+  //--------------unfollowing handel
+UserController.put("/unfollowing", async (req: Request, res: Response) => {
+    const { followerEmail, followeeEmail } = req.body; // Emails sent from the front end
+
+    if (!followerEmail || !followeeEmail) {
+        return res.status(400).json({ message: "Both follower and followee emails are required" });
+    }
+
+    try {
+        // Find the follower and followee in the database
+        const follower = await UserModel.findOne({ userMail: followerEmail });
+        const followee = await UserModel.findOne({ userMail: followeeEmail });
+
+        if (!follower || !followee) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Check if the follower is following the followee
+        if (!follower.followings.includes(followeeEmail)) {
+            return res.status(400).json({ message: "You are not following this user" });
+        }
+
+        // Remove the followee from the follower's following list
+        follower.followings = follower.followings.filter((email) => email !== followeeEmail);
+
+        // Remove the follower from the followee's followers list
+        followee.followers = followee.followers.filter((email) => email !== followerEmail);
+
+        // Save both documents
+        await follower.save();
+        await followee.save();
+
+        return res.status(200).json({ message: "Successfully unfollowed the user" });
+    } catch (error) {
+        console.error("Error unfollowing user:", error);
+        return res.status(500).json({ message: "Server error, please try again later" });
+    }
+});
+
 
 
 
