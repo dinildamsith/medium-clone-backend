@@ -1,6 +1,7 @@
 import express, {Request , Response} from "express";
 import PostModel from "../model/postModel";
 import postModel from "../model/postModel";
+import mongoose from "mongoose";
 
 const PostController = express.Router();
 
@@ -92,8 +93,28 @@ PostController.get("/for-you", async (req: Request, res: Response) => {
   });
   
 
-
-
+  //-------------Read post get
+  PostController.get("/read-post", async (req: Request, res: Response) => {
+    try {
+      const { postId }:any = req.query; // Get postId from query parameters
+  
+      // Check if postId is valid
+      if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
+        return res.status(400).json({ message: "Invalid Post ID" });
+      }
+  
+      const post = await PostModel.findById(postId); // Find post by ID
+  
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+  
+      res.status(200).json(post); // Send the post data as the response
+    } catch (error) {
+      console.error("Error reading post:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 
 // @ts-ignore
 export default PostController
