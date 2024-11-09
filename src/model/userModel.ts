@@ -5,8 +5,8 @@ const UserSchema = new mongoose.Schema({
     userName: { type: String, required: true },
     userImage:{ type: String, required: true },
     userAbout: { type: String, required: false },
-    followers: { type: Number, required: false },
-    followings: { type: Number, required: false },
+    followers: [],
+    followings: [],
 })
 
 
