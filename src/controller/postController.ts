@@ -75,46 +75,46 @@ PostController.get("/user-all-article", async (req: Request, res: Response) => {
 //----------for you feed have articles get
 PostController.get("/for-you", async (req: Request, res: Response) => {
     try {
-      const authorMail = req.query.email as string;
-  
-      // Find posts where authorMail is not equal to the given email
-      const forYouPost = await PostModel.find({ authorMail: { $ne: authorMail } });
-  
-      if (forYouPost.length === 0) {
-        return res.status(404).json({ message: "No posts found" });
-      }
-  
-      return res.status(200).json(forYouPost);
-  
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-      res.status(500).json({ message: "Server error, please try again later" });
-    }
-  });
-  
+        const authorMail = req.query.email as string;
 
-  //-------------Read post get
-  PostController.get("/read-post", async (req: Request, res: Response) => {
-    try {
-      const { postId }:any = req.query; // Get postId from query parameters
-  
-      // Check if postId is valid
-      if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
-        return res.status(400).json({ message: "Invalid Post ID" });
-      }
-  
-      const post = await PostModel.findById(postId); // Find post by ID
-  
-      if (!post) {
-        return res.status(404).json({ message: "Post not found" });
-      }
-  
-      res.status(200).json(post); // Send the post data as the response
+        // Find posts where authorMail is not equal to the given email
+        const forYouPost = await PostModel.find({ authorMail: { $ne: authorMail } });
+
+        if (forYouPost.length === 0) {
+            return res.status(404).json({ message: "No posts found" });
+        }
+
+        return res.status(200).json(forYouPost);
+
     } catch (error) {
-      console.error("Error reading post:", error);
-      res.status(500).json({ message: "Server error" });
+        console.error("Error fetching posts:", error);
+        res.status(500).json({ message: "Server error, please try again later" });
     }
-  });
+});
+
+
+//-------------Read post get
+PostController.get("/read-post", async (req: Request, res: Response) => {
+    try {
+        const { postId }:any = req.query; // Get postId from query parameters
+
+        // Check if postId is valid
+        if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
+            return res.status(400).json({ message: "Invalid Post ID" });
+        }
+
+        const post = await PostModel.findById(postId); // Find post by ID
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        res.status(200).json(post); // Send the post data as the response
+    } catch (error) {
+        console.error("Error reading post:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 // @ts-ignore
 export default PostController
