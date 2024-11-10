@@ -129,33 +129,36 @@ UserController.put("/unfollowing", async (req: Request, res: Response) => {
     }
 });
 
-//--------------handel book mark post
+
+//---------------handel bookmark and un-bookmark
 UserController.put('/bookmark', async (req: Request, res: Response) => {
     const { bookMarkPostId, userId } = req.body;
 
-
     try {
         // Find user by ID
-        const user :any= await UserModel.findById(userId);
+        const user: any = await UserModel.findById(userId);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
         // Check if post is already bookmarked
-        if (!user.bookMarksPosts.includes(bookMarkPostId)) {
-            // Add bookmark post ID to user's bookmarks array
+        if (user.bookMarksPosts.includes(bookMarkPostId)) {
+            // If the post is bookmarked, remove it (unbookmark)
+            user.bookMarksPosts = user.bookMarksPosts.filter((id: any) => id !== bookMarkPostId);
+            await user.save();
+            return res.status(200).json({ message: 'Post unbookmarked successfully', bookmarks: user.bookMarksPosts });
+        } else {
+            // If the post is not bookmarked, add it to bookmarks (bookmark)
             user.bookMarksPosts.push(bookMarkPostId);
             await user.save();
-
-            return res.status(200).json({ message: 'Post bookmarked successfully', bookmarks: user.bookmarks });
-        } else {
-            return res.status(400).json({ message: 'Post already bookmarked' });
+            return res.status(200).json({ message: 'Post bookmarked successfully', bookmarks: user.bookMarksPosts });
         }
     } catch (error: any) {
-        res.status(500).json({ message: 'An error occurred while bookmarking the post', error: error.message });
+        res.status(500).json({ message: 'An error occurred while processing the bookmark', error: error.message });
     }
 });
+
 
 
 
