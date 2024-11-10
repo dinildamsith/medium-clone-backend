@@ -6,7 +6,7 @@ const UserController = express.Router();
 //-----------save user
 UserController.post("/create-user",async  (req:Request, res:Response) => {
 
-    const {userMail,userName,userImage,userAbout,followers,followings} = req.body
+    const {userMail,userName,userImage,userAbout,followers,followings,bookMarkPosts} = req.body
 
 try{
     const newUser = new UserModel({
@@ -15,7 +15,8 @@ try{
       userImage,
       userAbout,
       followers: followers || [],   // Set followers to an empty array if not provided
-      followings: followings || []  // Set followings to an empty array if not provided
+      followings: followings || [],  // Set followings to an empty array if not provided
+      bookMarksPosts: bookMarkPosts || []  // Set followings to an empty array if not provided
     })
 
     const saveUser = newUser.save()
@@ -128,7 +129,33 @@ UserController.put("/unfollowing", async (req: Request, res: Response) => {
     }
 });
 
+//--------------handel book mark post
+UserController.put('/bookmark', async (req: Request, res: Response) => {
+    const { bookMarkPostId, userId } = req.body;
 
+
+    try {
+        // Find user by ID
+        const user :any= await UserModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if post is already bookmarked
+        if (!user.bookMarksPosts.includes(bookMarkPostId)) {
+            // Add bookmark post ID to user's bookmarks array
+            user.bookMarksPosts.push(bookMarkPostId);
+            await user.save();
+
+            return res.status(200).json({ message: 'Post bookmarked successfully', bookmarks: user.bookmarks });
+        } else {
+            return res.status(400).json({ message: 'Post already bookmarked' });
+        }
+    } catch (error: any) {
+        res.status(500).json({ message: 'An error occurred while bookmarking the post', error: error.message });
+    }
+});
 
 
 

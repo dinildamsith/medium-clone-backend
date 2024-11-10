@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
     userAbout: { type: String, required: false },
     followers: [],
     followings: [],
+    bookMarksPosts: []
 })
 
 
