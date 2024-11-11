@@ -116,5 +116,48 @@ PostController.get("/read-post", async (req: Request, res: Response) => {
     }
 });
 
+
+PostController.put("/add-comment", async (req: Request, res: Response) => {
+    try {
+        const { postId, comment, commenterName, commenterPic } = req.body;
+
+        // Check if the required fields are provided
+        if (!postId || !comment || !commenterName) {
+            return res.status(400).json({ message: "postId, comment, and commenterName are required." });
+        }
+
+        // Find the post by ID
+        const post = await PostModel.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Create a new comment object
+        const newComment = {
+            comment,
+            commenterName,
+            commenterPic: commenterPic || null,
+            date: new Date() // Optionally, add the date for when the comment was added
+        };
+
+        // Push the new comment to the post's comments array
+        post.postComments.push(newComment);
+
+        // Save the updated post
+        await post.save();
+
+        // Respond with the updated post
+        res.status(200).json({
+            message: "Comment added successfully",
+            post: post
+        });
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        res.status(500).json({ message: "Failed to add comment", error });
+    }
+});
+
+
 // @ts-ignore
 export default PostController
